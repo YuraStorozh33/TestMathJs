@@ -6,23 +6,26 @@ using System.Threading;
 
 Tests test = new Tests();
 test.Setup();
-test.Test1();
-
-
-
+test.Test1("3+4","7",1);
+test.TearDown();
+test.Setup();
+test.Test1("2*43(34-25)", "774", 2);
+test.TearDown();
+test.Setup();
+test.Test1("1.2 * (2 + 4.5)", "7,8", 3);
+test.TearDown();
+test.Setup();
+test.Test1("9 / 3 + 2i", "3 + 2i", 4);
+test.TearDown();
 
 namespace TestMathJs
 {
-
     public class Tests
     {
         private IWebDriver driver;
         private readonly By _mathInputButton = By.XPath("//input[@type='text']");
         private readonly By _findResultButton = By.XPath("//a[@id='link']");
         private readonly By _Result = By.XPath("//body[text()]");
-        private string exampleactual = "25+1777";
-        private string exampleexpected = "1802";
-
 
         [SetUp]
         public void Setup()
@@ -33,25 +36,26 @@ namespace TestMathJs
         }
 
         [Test]
-        public void Test1()
+        public void Test1(string actual, string expected,byte numberoftest)
         {
 
-            var math = driver.FindElement(_mathInputButton);
-            math.Clear();
-            math.SendKeys(exampleactual);
+            var math = driver.FindElement(_mathInputButton);         //вікно для вводу значень
+            math.Clear();                                            //очистка цього вікна від значень
             Thread.Sleep(500);
-            var findResult = driver.FindElement(_findResultButton);
+            math.SendKeys(actual);                                   //ввід значень
+            Thread.Sleep(500);
+            var findResult = driver.FindElement(_findResultButton);  //клік для вирішення прикладу
             findResult.Click();
-            var result = driver.FindElement(_Result);
-            var number = result.Text.Clone();
-            Console.WriteLine($"Number is {number}");
-            Assert.AreEqual(exampleexpected, number);
+            Thread.Sleep(500);
+            var result = driver.FindElement(_Result).Text;
+            Assert.AreEqual(expected, result);                        //перевірка значень
+            Console.WriteLine($"Successful TEST {numberoftest}");
         }
       
-        
         [TearDown]
         public void TearDown()
         {
+            driver.Quit();
 
         }
     }
