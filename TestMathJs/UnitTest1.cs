@@ -1,21 +1,28 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using TestMathJs;
+using System;
+using System.Threading;
 
 Tests test = new Tests();
 test.Setup();
 test.Test1();
 
 
+
+
 namespace TestMathJs
 {
-    
+
     public class Tests
     {
         private IWebDriver driver;
         private readonly By _mathInputButton = By.XPath("//input[@type='text']");
         private readonly By _findResultButton = By.XPath("//a[@id='link']");
-        private readonly By _Result = By.XPath("//body[text()='1779']");
+        private readonly By _Result = By.XPath("//body[text()]");
+        private string exampleactual = "25+1777";
+        private string exampleexpected = "1802";
+
 
         [SetUp]
         public void Setup()
@@ -28,18 +35,20 @@ namespace TestMathJs
         [Test]
         public void Test1()
         {
+
             var math = driver.FindElement(_mathInputButton);
             math.Clear();
-            math.SendKeys("2+1777");
+            math.SendKeys(exampleactual);
+            Thread.Sleep(500);
             var findResult = driver.FindElement(_findResultButton);
             findResult.Click();
             var result = driver.FindElement(_Result);
             var number = result.Text.Clone();
-            System.Console.WriteLine($"Nuber is {number}");
-            
-
-
+            Console.WriteLine($"Number is {number}");
+            Assert.AreEqual(exampleexpected, number);
         }
+      
+        
         [TearDown]
         public void TearDown()
         {
